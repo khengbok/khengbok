@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Yönetim Paneli | Khengbok</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>KHENGBOK</h1>
+
+    <nav>
+        <a href="index.html">Site</a>
+        <a href="haberler.html">Haberler</a>
+        <a href="gruplar.html">Kategoriler</a>
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="admin-header">
+
+        <p>KHENGBOK YÖNETİM PANELİ</p>
+
+        <h2>Yeni Haber Ekle</h2>
+
+        <p>
+            Haberini hazırla, görsellerini ekle ve yayınla.
+        </p>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- HABER FORMU -->
+    <!-- ========================= -->
+
+    <section class="admin-form">
+
+
+        <!-- BAŞLIK -->
+
+        <label for="newsTitle">
+            Haber Başlığı
+        </label>
+
+        <input
+            type="text"
+            id="newsTitle"
+            placeholder="Örneğin: BTS'ten yeni açıklama"
+        >
+
+
+        <!-- KATEGORİ -->
+
+        <label for="newsCategory">
+            Kategori
+        </label>
+
+        <div class="category-row">
+
+            <select id="newsCategory">
+
+                <option value="">
+                    Kategori seç
+                </option>
+
+                <option value="BTS">
+                    BTS
+                </option>
+
+                <option value="Stray Kids">
+                    Stray Kids
+                </option>
+
+                <option value="BLACKPINK">
+                    BLACKPINK
+                </option>
+
+                <option value="IVE">
+                    IVE
+                </option>
+
+                <option value="TWICE">
+                    TWICE
+                </option>
+
+                <option value="Diğer">
+                    Diğer
+                </option>
+
+            </select>
+
+
+            <input
+                type="text"
+                id="newCategory"
+                placeholder="Yeni kategori"
+            >
+
+
+            <button
+                type="button"
+                id="addCategoryButton"
+            >
+                + Ekle
+            </button>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- HABER EDİTÖRÜ -->
+        <!-- ========================= -->
+
+        <label>
+            Haber Metni
+        </label>
+
+
+        <div class="news-editor-wrapper">
+
+
+            <div class="editor-toolbar">
+
+                <button type="button" id="boldButton" title="Kalın"><strong>B</strong></button>
+                <button type="button" id="italicButton" title="İtalik"><em>I</em></button>
+                <button type="button" id="linkButton" title="Link">🔗</button>
+                <button type="button" id="articleImageButton" title="Haber içine fotoğraf ekle">🖼️</button>
+                <button type="button" id="gifButton" title="GIF ekle">GIF</button>
+                <button type="button" id="youtubeButton" title="YouTube videosu ekle">▶️ Video</button>
+                <button type="button" id="xButton" title="X gönderisi ekle">𝕏 X</button>
+                <button type="button" id="instagramButton" title="Instagram gönderisi ekle">📷 Instagram</button>
+                <button type="button" id="redditButton" title="Reddit gönderisi ekle">Reddit</button>
+
+            </div>
+
+            <div
+                id="newsText"
+                class="news-editor"
+                contenteditable="true"
+                data-placeholder="Haberini buraya yaz..."
+            ></div>
+
+
+        </div>
+
+
+        <!-- HABER İÇİ FOTOĞRAF -->
+
+        <input
+            type="file"
+            id="articleImage"
+            accept="image/*"
+            hidden
+        >
+
+
+        <!-- ========================= -->
+        <!-- KAPAK FOTOĞRAFI -->
+        <!-- ========================= -->
+
+        <label>
+            Kapak Fotoğrafı
+        </label>
+
+
+        <div class="image-upload-box">
+
+            <input
+                type="file"
+                id="newsImage"
+                accept="image/*"
+            >
+
+            <p>
+                Haber kartında görünecek kapak fotoğrafı.
+            </p>
+
+            <p id="coverStatus" class="cover-status"></p>
+
+        </div>
+
+        <label for="newsSource">
+            Kaynak
+        </label>
+
+        <input
+            type="url"
+            id="newsSource"
+            placeholder="https://..."
+        >
+
+
+        <!-- ========================= -->
+        <!-- TARİH VE SAAT -->
+        <!-- ========================= -->
+
+        <div class="date-time-row">
+
+
+            <div>
+
+                <label for="newsDate">
+                    Yayın Tarihi
+                </label>
+
+                <input
+                    type="date"
+                    id="newsDate"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="newsTime">
+                    Yayın Saati
+                </label>
+
+                <input
+                    type="time"
+                    id="newsTime"
+                >
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- POPÜLER -->
+        <!-- ========================= -->
+
+        <label class="checkbox-label">
+
+            <input
+                type="checkbox"
+                id="isPopular"
+            >
+
+            Popüler haber olarak göster
+
+        </label>
+
+
+        <!-- ========================= -->
+        <!-- BUTONLAR -->
+        <!-- ========================= -->
+
+        <button
+            type="button"
+            id="publishButton"
+            class="publish-button"
+        >
+            💜 Haberi Yayınla
+        </button>
+
+
+        <button
+            type="button"
+            id="updateButton"
+            class="update-button"
+            style="display: none;"
+        >
+            ✏️ Haberi Güncelle
+        </button>
+
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- YAYINLANAN HABERLER -->
+    <!-- ========================= -->
+
+    <section class="admin-news-list">
+
+        <h2>
+            Yayınlanan Haberler
+        </h2>
+
+
+        <div id="adminNewsList">
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ========================= -->
+<!-- FOTOĞRAF KIRPMA PENCERESİ -->
+<!-- ========================= -->
+
+<div
+    id="cropModal"
+    class="crop-modal"
+    style="display: none;"
+>
+
+    <div class="crop-box">
+
+        <h2>
+            Fotoğrafı Kırp
+        </h2>
+
+
+        <div class="crop-preview">
+
+            <img
+                id="cropImage"
+                src=""
+                alt="Kırpılacak fotoğraf"
+            >
+
+        </div>
+
+
+        <div class="crop-controls">
+
+            <button
+                type="button"
+                id="cropCancel"
+            >
+                Vazgeç
+            </button>
+
+
+            <button
+                type="button"
+                id="cropConfirm"
+            >
+                ✓ Fotoğrafı Kullan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="admin.js"></script>
+
+</body>
+
+</html>
