@@ -3,7 +3,7 @@ export async function onRequest(context) {
 
     // Haberleri getir
     if (request.method === "GET") {
-        const result = await env.db
+        const result = await env.DB
             .prepare("SELECT * FROM articles ORDER BY createdAt DESC")
             .all();
 
@@ -14,7 +14,7 @@ export async function onRequest(context) {
     if (request.method === "POST") {
         const data = await request.json();
 
-        await env.db
+        await env.DB
             .prepare(`
                 INSERT INTO articles
                 (id, title, category, text, source, date, time, image, gif, embedType, embedUrl, popular, createdAt)
