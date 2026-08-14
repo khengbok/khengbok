@@ -8,7 +8,7 @@
 
 const params = new URLSearchParams(location.search);
 const id = params.get("id");
-const KHENGBOK_API = "https://khengbok-api.dilanakbudak07.workers.dev";
+const KHENGBOK_API = "https://khengbok-api.khengbok.workers.dev";
 
 let news = null;
 try {

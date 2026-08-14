@@ -43,7 +43,7 @@
     // ========================================
 
     const KHENGBOK_API =
-        "https://khengbok-api.dilanakbudak07.workers.dev";
+        "https://khengbok-api.khengbok.workers.dev";
 
     // ========================================
     // DEĞİŞKENLER

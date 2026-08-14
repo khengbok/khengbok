@@ -4,7 +4,7 @@
 
 let cloudNewsCache = null;
 let cloudNewsPromise = null;
-const KHENGBOK_API = "https://khengbok-api.dilanakbudak07.workers.dev";
+const KHENGBOK_API = "https://khengbok-api.khengbok.workers.dev";
 
 function getNewsList(){
   return cloudNewsCache || [];
