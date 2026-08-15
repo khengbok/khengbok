@@ -1,7 +1,7 @@
 // ========================================
 // KHENGBOK - HABER DETAY
 // ========================================
-(function(){
+(function(){})
 "use strict";
 
 (async function(){
@@ -74,20 +74,27 @@ function createEmbed(type, url) {
     const wrap = document.createElement("div");
     wrap.className = "article-inline-embed";
 
-    if (!type || !url) return wrap;
+    if (!type || !url) {
+        return wrap;
+    }
 
     try {
+
         if (type === "gif") {
             const img = document.createElement("img");
+
             img.src = url;
             img.alt = "GIF";
             img.className = "article-inline-gif";
+
             wrap.appendChild(img);
+
             return wrap;
         }
 
         if (type === "youtube") {
             const u = new URL(url);
+
             const vid = u.hostname.includes("youtu.be")
                 ? u.pathname.slice(1)
                 : u.searchParams.get("v");
@@ -97,9 +104,16 @@ function createEmbed(type, url) {
                 box.className = "embed-container";
 
                 const iframe = document.createElement("iframe");
-                iframe.src = "https://www.youtube.com/embed/" + encodeURIComponent(vid);
+
+                iframe.src =
+                    "https://www.youtube.com/embed/" +
+                    encodeURIComponent(vid);
+
                 iframe.title = "YouTube";
-                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+                iframe.allow =
+                    "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
                 iframe.allowFullscreen = true;
 
                 box.appendChild(iframe);
@@ -110,35 +124,65 @@ function createEmbed(type, url) {
         }
 
         if (type === "x") {
-            const block = document.createElement("blockquote");
+            const block =
+                document.createElement("blockquote");
+
             block.className = "twitter-tweet";
-            const a = document.createElement("a");
+
+            const a =
+                document.createElement("a");
+
             a.href = url;
+
             block.appendChild(a);
             wrap.appendChild(block);
 
             loadScriptOnce(
                 "twitter-widgets-script",
                 "https://platform.twitter.com/widgets.js",
-                () => window.twttr && window.twttr.widgets && window.twttr.widgets.load(wrap)
+                () => {
+                    if (
+                        window.twttr &&
+                        window.twttr.widgets
+                    ) {
+                        window.twttr.widgets.load(wrap);
+                    }
+                }
             );
 
             return wrap;
         }
 
         if (type === "instagram") {
-            const clean = url.split("?")[0].replace(/\/$/,"");
+            const clean =
+                url
+                    .split("?")[0]
+                    .replace(/\/$/, "");
 
-            const block = document.createElement("blockquote");
+            const block =
+                document.createElement("blockquote");
+
             block.className = "instagram-media";
-            block.setAttribute("data-instgrm-permalink", clean + "/");
-            block.setAttribute("data-instgrm-version", "14");
 
-            const a = document.createElement("a");
+            block.setAttribute(
+                "data-instgrm-permalink",
+                clean + "/"
+            );
+
+            block.setAttribute(
+                "data-instgrm-version",
+                "14"
+            );
+
+            const a =
+                document.createElement("a");
+
             a.href = clean + "/";
             a.target = "_blank";
             a.rel = "noopener noreferrer";
-            a.textContent = "Instagram gönderisini görüntüle";
+
+            a.textContent =
+                "Instagram gönderisini görüntüle";
 
             block.appendChild(a);
             wrap.appendChild(block);
@@ -146,37 +190,29 @@ function createEmbed(type, url) {
             loadScriptOnce(
                 "instagram-embed-script",
                 "https://www.instagram.com/embed.js",
-                () => window.instgrm && window.instgrm.Embeds && window.instgrm.Embeds.process()
+                () => {
+                    if (
+                        window.instgrm &&
+                        window.instgrm.Embeds
+                    ) {
+                        window.instgrm.Embeds.process();
+                    }
+                }
             );
 
             return wrap;
         }
 
-        if (type === "reddit") {
-            // Reddit'in kendi embed endpoint'i yerine güvenli bir bağlantı kartı
-            // kullanıyoruz; Reddit her gönderiye iframe ile izin vermeyebilir.
-            const box = document.createElement("div");
-            box.className = "reddit-embed-wrap";
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
-            a.textContent = "Reddit gönderisini görüntüle";
-
-            box.appendChild(a);
-            wrap.appendChild(box);
-
-            return wrap;
-        }
-    } catch(e) {
-        console.error("Gömülü içerik yüklenemedi:", e);
+    } catch (error) {
+        console.error(
+            "Embed oluşturulamadı:",
+            error
+        );
     }
 
     return wrap;
 }
-
-function loadScriptOnce(id, src, callback) {
+function createEmbed(type, url) {
     const existing = document.getElementById(id);
 
     if (existing) {
@@ -236,7 +272,7 @@ if (vc) {
 // Yorumlar
 const cb = $("commentButton");
 
-if (cb) {
+if (cb) {}
     const listEl = $("commentsList");
     const key = "khengbokComments_" + news.id;
 
@@ -303,8 +339,4 @@ if (cb) {
 
         alert("Yorumun gönderildi! 💜");
     });
-}
-
-
-})();
-})();
+})
