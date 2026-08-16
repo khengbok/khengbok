@@ -1479,8 +1479,7 @@
             instagram:
                 "Instagram gönderisi",
 
-            reddit:
-                "Reddit gönderisi"
+            
         };
 
         wrap.innerHTML =
@@ -1603,11 +1602,7 @@
             "Instagram gönderisi"
         ],
 
-        [
-            "redditButton",
-            "reddit",
-            "Reddit gönderisi"
-        ]
+        
 
     ].forEach(
         ([id, type, label]) => {

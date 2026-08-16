@@ -13,25 +13,76 @@ function getNewsList(){
 async function loadCloudNews(){
   if (cloudNewsCache) return cloudNewsCache;
   if (cloudNewsPromise) return cloudNewsPromise;
-  cloudNewsPromise = fetch(KHENGBOK_API + "/api/articles")
-    .then(r => { if(!r.ok) throw new Error("Haberler alınamadı"); return r.json(); })
-    .then(rows => {
-      cloudNewsCache = Array.isArray(rows) ? rows.map(a => ({
-        id:a.id, title:a.title||"", text:a.content||"", image:a.cover_image||"",
-        category:a.category||"Genel", source:a.source||"", date:a.news_date||"",
-        time:a.news_time||"", gif:a.gif||"", embedType:a.embed_type||"",
-        embedUrl:a.embed_url||"", popular:Boolean(a.popular), createdAt:a.created_at||""
-      })) : [];
-      return cloudNewsCache;
-    })
-    .catch(err => { console.error("Khengbok API:",err); cloudNewsCache=[]; return []; });
+
+  cloudNewsPromise = (async () => {
+    let lastError = null;
+
+    // API kısa süreli cevap vermezse haberleri "0 haber" olarak göstermemek için
+    // birkaç kez tekrar deniyoruz.
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const response = await fetch(
+          KHENGBOK_API + "/api/articles",
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+          throw new Error("Haberler alınamadı. HTTP " + response.status);
+        }
+
+        const rows = await response.json();
+
+        if (!Array.isArray(rows)) {
+          throw new Error("API geçerli bir haber listesi döndürmedi.");
+        }
+
+        cloudNewsCache = rows.map(a => ({
+          id: a.id,
+          title: a.title || "",
+          text: a.content || "",
+          image: a.cover_image || "",
+          category: a.category || "Genel",
+          source: a.source || "",
+          date: a.news_date || "",
+          time: a.news_time || "",
+          gif: a.gif || "",
+          embedType: a.embed_type || "",
+          embedUrl: a.embed_url || "",
+          popular: Boolean(a.popular),
+          createdAt: a.created_at || ""
+        }));
+
+        return cloudNewsCache;
+
+      } catch (err) {
+        lastError = err;
+        console.error("Khengbok API denemesi " + attempt + "/3:", err);
+
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 800));
+        }
+      }
+    }
+
+    console.error("Khengbok API bağlantısı başarısız:", lastError);
+    cloudNewsCache = [];
+    return [];
+  })();
+
   return cloudNewsPromise;
 }
 
 function isPublished(n){
-  if(!n.date||!n.time)return true;
-  const d=new Date(n.date+"T"+n.time);
-  return !Number.isNaN(d.getTime())&&d<=new Date();
+  // Yayın tarihi/saatini bozmuyoruz:
+  // Geçmiş veya şu anki tarih+saat görünür, gelecekteki haber gizlenir.
+  if(!n.date || !n.time) return true;
+
+  const d = new Date(n.date + "T" + n.time);
+
+  // Tarih biçimi bozuksa haberi yanlışlıkla gizleme.
+  if(Number.isNaN(d.getTime())) return true;
+
+  return d <= new Date();
 }
 function escapeHTML(v){
   const d=document.createElement("div"); d.textContent=v==null?"":String(v); return d.innerHTML;
