@@ -125,6 +125,7 @@ function render(id,opts={}){
 async function bootstrapNews(){
   await loadCloudNews();
   render("homeLatestNewsList",{limit:6});
+  render("homePopularNewsList",{popular:true,limit:3});
   render("latestNewsList");
   render("popularNewsList",{popular:true,limit:20});
 
