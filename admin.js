@@ -424,11 +424,15 @@
         try {
 
             const response =
-                await fetch(
-                    KHENGBOK_API +
-                    "/api/articles/" +
-                    encodeURIComponent(id)
-                );
+    await adminFetch(
+        KHENGBOK_API +
+        "/api/articles/" +
+        encodeURIComponent(id)
+    );
+
+if (!response) {
+    return;
+}
 
             if (!response.ok) {
 
