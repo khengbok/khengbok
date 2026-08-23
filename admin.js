@@ -1681,7 +1681,429 @@ if (articleInput && articleImageButton) {
 
         return clone.innerHTML.trim();
     }
+// ========================================
+// GİZLİ İSTATİSTİKLER + YORUM YÖNETİMİ
+// ========================================
 
+(function () {
+
+    const statsButton =
+        $("adminStatsButton");
+
+    const statsPanel =
+        $("adminStatsPanel");
+
+    if (!statsButton || !statsPanel) {
+        return;
+    }
+
+    statsButton.addEventListener(
+        "click",
+        async () => {
+
+            const response =
+                await adminFetch(
+                    KHENGBOK_API +
+                    "/api/admin/stats"
+                );
+
+            if (!response) {
+                return;
+            }
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+
+                alert(
+                    result.error ||
+                    "İstatistikler alınamadı."
+                );
+
+                return;
+            }
+
+            statsPanel.style.display =
+                "block";
+
+            const totalViews =
+                $("adminTotalViews");
+
+            const totalComments =
+                $("adminTotalComments");
+
+            const approvedComments =
+                $("adminApprovedComments");
+
+            const pendingComments =
+                $("adminPendingComments");
+
+            if (totalViews) {
+                totalViews.textContent =
+                    result.totalViews || 0;
+            }
+
+            if (totalComments) {
+                totalComments.textContent =
+                    result.totalComments || 0;
+            }
+
+            if (approvedComments) {
+                approvedComments.textContent =
+                    result.approvedComments || 0;
+            }
+
+            if (pendingComments) {
+                pendingComments.textContent =
+                    result.pendingComments || 0;
+            }
+
+            const articleStats =
+                $("adminArticleStats");
+
+            if (articleStats) {
+
+                articleStats.innerHTML = "";
+
+                (result.articles || [])
+                    .forEach(article => {
+
+                        const row =
+                            document.createElement("div");
+
+                        row.className =
+                            "admin-stat-row";
+
+                        row.innerHTML = `
+                            <strong>
+                                ${esc(article.title)}
+                            </strong>
+
+                            <span>
+                                👁️ ${Number(article.views || 0)}
+                            </span>
+                        `;
+
+                        articleStats.appendChild(row);
+                    });
+            }
+
+            await loadAdminComments();
+        }
+    );
+
+    // ========================================
+    // YORUMLARI GETİR
+    // ========================================
+
+    async function loadAdminComments() {
+
+        const commentsList =
+            $("adminCommentsList");
+
+        if (!commentsList) {
+            return;
+        }
+
+        const response =
+            await adminFetch(
+                KHENGBOK_API +
+                "/api/admin/comments"
+            );
+
+        if (!response) {
+            return;
+        }
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            commentsList.innerHTML =
+                "<p>Yorumlar alınamadı.</p>";
+
+            return;
+        }
+
+        commentsList.innerHTML = "";
+
+        const comments =
+            result.comments || [];
+
+        if (!comments.length) {
+
+            commentsList.innerHTML =
+                "<p>Henüz yorum yok.</p>";
+
+            return;
+        }
+
+        comments.forEach(comment => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "admin-comment-item";
+
+            const approved =
+                Number(comment.approved || 0) === 1;
+
+            item.innerHTML = `
+                <div class="admin-comment-info">
+
+                    <strong>
+                        ${esc(
+                            comment.name ||
+                            "Anonim"
+                        )}
+                    </strong>
+
+                    <p>
+                        ${esc(
+                            comment.comment ||
+                            comment.text ||
+                            ""
+                        )}
+                    </p>
+
+                    <small>
+                        ${approved
+                            ? "✅ Onaylandı"
+                            : "⏳ Onay bekliyor"}
+                    </small>
+
+                </div>
+
+                <div class="admin-comment-actions">
+
+                    <button
+                        type="button"
+                        class="admin-comment-approve">
+                        ${approved
+                            ? "❌ Onayı kaldır"
+                            : "✅ Onayla"}
+                    </button>
+
+                    <button
+                        type="button"
+                        class="admin-comment-edit">
+                        ✏️ Düzenle
+                    </button>
+
+                    <button
+                        type="button"
+                        class="admin-comment-reply">
+                        💬 Yanıtla
+                    </button>
+
+                    <button
+                        type="button"
+                        class="admin-comment-delete">
+                        🗑️ Sil
+                    </button>
+
+                </div>
+            `;
+
+            // ONAYLA
+
+            item
+                .querySelector(
+                    ".admin-comment-approve"
+                )
+                .addEventListener(
+                    "click",
+                    () =>
+                        updateComment(
+                            comment.id,
+                            {
+                                approved:
+                                    !approved
+                            }
+                        )
+                );
+
+            // DÜZENLE
+
+            item
+                .querySelector(
+                    ".admin-comment-edit"
+                )
+                .addEventListener(
+                    "click",
+                    async () => {
+
+                        const oldText =
+                            comment.comment ||
+                            comment.text ||
+                            "";
+
+                        const newText =
+                            prompt(
+                                "Yorumu düzenle:",
+                                oldText
+                            );
+
+                        if (
+                            newText === null
+                        ) {
+                            return;
+                        }
+
+                        await updateComment(
+                            comment.id,
+                            {
+                                comment:
+                                    newText
+                            }
+                        );
+                    }
+                );
+
+            // YANITLA
+
+            item
+                .querySelector(
+                    ".admin-comment-reply"
+                )
+                .addEventListener(
+                    "click",
+                    async () => {
+
+                        const oldReply =
+                            comment.reply ||
+                            "";
+
+                        const reply =
+                            prompt(
+                                "Yanıtını yaz:",
+                                oldReply
+                            );
+
+                        if (
+                            reply === null
+                        ) {
+                            return;
+                        }
+
+                        await updateComment(
+                            comment.id,
+                            {
+                                reply:
+                                    reply
+                            }
+                        );
+                    }
+                );
+
+            // SİL
+
+            item
+                .querySelector(
+                    ".admin-comment-delete"
+                )
+                .addEventListener(
+                    "click",
+                    async () => {
+
+                        if (
+                            !confirm(
+                                "Bu yorumu silmek istediğine emin misin?"
+                            )
+                        ) {
+                            return;
+                        }
+
+                        const response =
+                            await adminFetch(
+                                KHENGBOK_API +
+                                "/api/admin/comments/" +
+                                encodeURIComponent(
+                                    comment.id
+                                ),
+                                {
+                                    method:
+                                        "DELETE"
+                                }
+                            );
+
+                        if (!response) {
+                            return;
+                        }
+
+                        if (!response.ok) {
+
+                            const error =
+                                await response.json();
+
+                            alert(
+                                error.error ||
+                                "Yorum silinemedi."
+                            );
+
+                            return;
+                        }
+
+                        await loadAdminComments();
+                    }
+                );
+
+            commentsList.appendChild(item);
+        });
+    }
+
+    // ========================================
+    // YORUM GÜNCELLE
+    // ========================================
+
+    async function updateComment(
+        id,
+        data
+    ) {
+
+        const response =
+            await adminFetch(
+                KHENGBOK_API +
+                "/api/admin/comments/" +
+                encodeURIComponent(id),
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+                }
+            );
+
+        if (!response) {
+            return;
+        }
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                result.error ||
+                "Yorum güncellenemedi."
+            );
+
+            return;
+        }
+
+        await loadAdminComments();
+
+    }
+
+})();
     // ========================================
     // BAŞLAT
     // ========================================
