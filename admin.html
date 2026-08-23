@@ -357,5 +357,50 @@
 <script src="/admin.js?v=999"></script>
 
 </body>
+<!-- GİZLİ ADMİN ALANI -->
+
+<div class="admin-private-section">
+
+    <button type="button" id="adminStatsButton">
+        🔒 İstatistikler ve Yorum Yönetimi
+    </button>
+
+    <div id="adminStatsPanel" style="display:none;">
+
+        <h2>📊 İstatistikler</h2>
+
+        <p>
+            Toplam görüntülenme:
+            <strong id="adminTotalViews">0</strong>
+        </p>
+
+        <p>
+            Toplam yorum:
+            <strong id="adminTotalComments">0</strong>
+        </p>
+
+        <p>
+            Onaylanan yorum:
+            <strong id="adminApprovedComments">0</strong>
+        </p>
+
+        <p>
+            Bekleyen yorum:
+            <strong id="adminPendingComments">0</strong>
+        </p>
+
+        <h3>Haber Görüntülenmeleri</h3>
+
+        <div id="adminArticleStats"></div>
+
+        <h2>💬 Yorum Yönetimi</h2>
+
+        <div id="adminCommentsList">
+            <p>Yorumları görmek için istatistikler bölümünü aç.</p>
+        </div>
+
+    </div>
+
+</div>
 
 </html>
