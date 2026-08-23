@@ -1139,36 +1139,33 @@
     }
 
     // ========================================
-// HABER İÇİ RESİM - KIRPMASIZ (ORİJİNAL BOYUT)
+// HABER İÇİ GÖRSEL — KIRPMASIZ
 // ========================================
-if (articleInput) {
-    const newArticleInput = articleInput.cloneNode(true);
-    articleInput.parentNode.replaceChild(newArticleInput, articleInput);
+if (articleInput && articleImageButton) {
+    articleImageButton.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+    });
 
-    const articleImageButton = $("articleImageButton");
+    articleImageButton.addEventListener("click", () => {
+        articleInput.click();
+    });
 
-    if (articleImageButton) {
-        articleImageButton.addEventListener("click", () => {
-            newArticleInput.click();
-        });
-    }
+    articleInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
 
-    newArticleInput.addEventListener("change", function (e) {
-        const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
 
-        reader.onload = function (event) {
-            const rawBase64 = event.target.result;
+        reader.onload = () => {
+            const img = document.createElement("img");
 
-            const imgHTML = `<br><img src="${rawBase64}" class="article-inline-image" alt="Haber içi görsel"><br>`;
+            img.src = reader.result;
+            img.alt = "Haber içi görsel";
+            img.className = "article-inline-image";
 
-            if (text) {
-                text.innerHTML += imgHTML;
-            }
-
-            newArticleInput.value = "";
+            insertNodeAtCursor(img);
+            articleInput.value = "";
         };
 
         reader.readAsDataURL(file);
