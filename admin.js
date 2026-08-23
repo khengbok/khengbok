@@ -1148,29 +1148,33 @@ if (articleImageButton && articleInput) {
 // HABER İÇİ RESİM - KIRPMASIZ (ORİJİNAL BOYUT)
 // ========================================
 if (articleInput) {
-    // Eski event listener'ları temizlemek için klonluyoruz
     const newArticleInput = articleInput.cloneNode(true);
     articleInput.parentNode.replaceChild(newArticleInput, articleInput);
+
+    const articleImageButton = $("articleImageButton");
+
+    if (articleImageButton) {
+        articleImageButton.addEventListener("click", () => {
+            newArticleInput.click();
+        });
+    }
 
     newArticleInput.addEventListener("change", function (e) {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
+
         reader.onload = function (event) {
             const rawBase64 = event.target.result;
 
-            // Görseli hiçbir kırpma (crop) işlemine sokmadan doğrudan orijinal haliyle ekle
-            const imgHTML = `<br><img src="${rawBase64}" class="article-inline-image" alt="Haber içi görsel" /><br>`;
+            const imgHTML = `<br><img src="${rawBase64}" class="article-inline-image" alt="Haber içi görsel"><br>`;
 
-            // Zengin metin editörüne (newsText) doğrudan ekle
             if (text) {
                 text.innerHTML += imgHTML;
             }
 
-            // Input'u sıfırla
             newArticleInput.value = "";
-            alert("Görsel orijinal boyutuyla habere eklendi! 🖼️");
         };
 
         reader.readAsDataURL(file);
