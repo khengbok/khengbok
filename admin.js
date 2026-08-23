@@ -27,13 +27,7 @@
 
     const coverInput = $("newsImage");
     const articleInput = $("articleImage");
-    const articleImageButton = $("articleImageButton");
-
-if (articleImageButton && articleInput) {
-    articleImageButton.addEventListener("click", () => {
-        articleInput.click();
-    });
-}
+    
 
     const publish = $("publishButton");
     const update = $("updateButton");
