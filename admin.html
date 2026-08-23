@@ -355,99 +355,44 @@
 
 <script src="/admin.js?v=999"></script>
 
-<!-- GİZLİ ADMİN ALANI -->
-
 <div class="admin-private-section">
+  <button type="button" id="adminStatsButton">
+    🔒 İstatistikler ve Yorum Yönetimi
+  </button>
 
-    <button type="button" id="adminStatsButton">
-        🔒 İstatistikler ve Yorum Yönetimi
-    </button>
-    <button type="button" id="adminStatsButton">
-    📊 İstatistikler ve Yorum Yönetimi
-</button>
-
-<div id="adminStatsPanel" style="display:none;">
-
+  <div id="adminStatsPanel" style="display: none;">
     <h2>📊 İstatistikler</h2>
 
     <div class="admin-stat-boxes">
+      <div>
+        <strong id="adminTotalViews">0</strong>
+        <span>Toplam Görüntülenme</span>
+      </div>
 
-        <div>
-            <strong id="adminTotalViews">0</strong>
-            <span>Toplam Görüntülenme</span>
-        </div>
+      <div>
+        <strong id="adminTotalComments">0</strong>
+        <span>Toplam Yorum</span>
+      </div>
 
-        <div>
-            <strong id="adminTotalComments">0</strong>
-            <span>Toplam Yorum</span>
-        </div>
+      <div>
+        <strong id="adminApprovedComments">0</strong>
+        <span>Onaylanan Yorum</span>
+      </div>
 
-        <div>
-            <strong id="adminApprovedComments">0</strong>
-            <span>Onaylanan Yorum</span>
-        </div>
-
-        <div>
-            <strong id="adminPendingComments">0</strong>
-            <span>Onay Bekleyen Yorum</span>
-        </div>
-
+      <div>
+        <strong id="adminPendingComments">0</strong>
+        <span>Onay Bekleyen Yorum</span>
+      </div>
     </div>
 
     <h3>📰 Haber Görüntülenmeleri</h3>
-
     <div id="adminArticleStats"></div>
 
     <h2>💬 Yorum Yönetimi</h2>
-
-    <div id="adminCommentsList">
-        <p>Yorumlar yükleniyor...</p>
-    </div>
-
+    <div id="adminCommentsList"></div>
+  </div>
 </div>
 
-    <div id="adminStatsPanel" style="display:none;">
-
-        <h2>📊 İstatistikler</h2>
-
-        <p>
-            Toplam görüntülenme:
-            <strong id="adminTotalViews">0</strong>
-        </p>
-
-        <p>
-            Toplam yorum:
-            <strong id="adminTotalComments">0</strong>
-        </p>
-
-        <p>
-            Onaylanan yorum:
-            <strong id="adminApprovedComments">0</strong>
-        </p>
-
-        <p>
-            Bekleyen yorum:
-            <strong id="adminPendingComments">0</strong>
-        </p>
-
-        <h3>Haber Görüntülenmeleri</h3>
-
-        <div id="adminArticleStats"></div>
-
-        <h2>💬 Yorum Yönetimi</h2>
-
-        <div id="adminCommentsList">
-            <p>Yorumları görmek için istatistikler bölümünü aç.</p>
-        </div>
-
-    </div>
-
-</div>
-
+<script src="/admin.js?v=999"></script>
 </body>
-</html>
-
-
-</body>
-
 </html>
