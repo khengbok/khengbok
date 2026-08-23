@@ -27,6 +27,7 @@
 
     const coverInput = $("newsImage");
     const articleInput = $("articleImage");
+    const articleImageButton = $("articleImageButton");
     
 
     const publish = $("publishButton");
