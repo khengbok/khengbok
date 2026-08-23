@@ -2386,3 +2386,13 @@ img.article-inline-image {
     display: block !important;
     margin: 20px auto !important;
 }
+/* Sadece haber içi görseller: doğal boyut, küçük ekranda taşmaz */
+#newsContent img,
+.article-content img,
+img.article-inline-image {
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+}
