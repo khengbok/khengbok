@@ -2398,3 +2398,37 @@ img.article-inline-image {
     max-height: none !important;
     object-fit: contain !important;
 }
+
+/* ========================================
+   KHENGBOK - HABER ETİKETLERİ
+   Bu blok dosyanın sonundadır; mevcut
+   kuralların hiçbirini değiştirmez.
+======================================== */
+
+.news-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+}
+
+.news-tags:empty {
+    display: none;
+}
+
+.news-tags-label {
+    font-size: 13px;
+    color: #999;
+}
+
+.news-tag {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: #f3e9fd;
+    border: 1px solid #e2d0f7;
+    color: #6b21b6;
+    font-size: 13px;
+    line-height: 1.4;
+}

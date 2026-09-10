@@ -24,6 +24,7 @@
     const date = $("newsDate");
     const time = $("newsTime");
     const popular = $("isPopular");
+    const tags = $("newsTags");
 
     const coverInput = $("newsImage");
     const articleInput = $("articleImage");
@@ -278,6 +279,9 @@
             category:
                 category.value,
 
+            tags:
+                tags ? tags.value.trim() : "",
+
             text:
                 serializeArticle(),
 
@@ -456,6 +460,10 @@ if (!response) {
             category.value =
                 article.category || "";
 
+            if (tags) {
+                tags.value = article.tags || "";
+            }
+
             source.value =
                 article.source || "";
 
@@ -633,6 +641,9 @@ if (!response) {
                                     category:
                                         data.category,
 
+                                    tags:
+                                        data.tags,
+
                                     source:
                                         data.source,
 
@@ -749,6 +760,9 @@ if (!response) {
                                     category:
                                         data.category,
 
+                                    tags:
+                                        data.tags,
+
                                     source:
                                         data.source,
 
@@ -809,6 +823,10 @@ if (!response) {
     function clearForm() {
 
         title.value = "";
+
+        if (tags) {
+            tags.value = "";
+        }
         category.value = "";
         text.innerHTML = "";
         source.value = "";
@@ -1471,6 +1489,9 @@ if (articleInput && articleImageButton) {
             instagram:
                 "Instagram gönderisi",
 
+            reddit:
+                "Reddit gönderisi",
+
             
         };
 
@@ -1592,6 +1613,12 @@ if (articleInput && articleImageButton) {
             "instagramButton",
             "instagram",
             "Instagram gönderisi"
+        ],
+
+        [
+            "redditButton",
+            "reddit",
+            "Reddit gönderisi"
         ],
 
         

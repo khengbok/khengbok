@@ -30,6 +30,7 @@
                         text: article.content || "",
                         image: article.cover_image || "",
                         category: article.category || "Genel",
+                    tags: article.tags || "",
                         source: article.source || "",
                         date: article.news_date || "",
                         time: article.news_time || "",
@@ -154,6 +155,10 @@
                 if (published) {
                     ld.datePublished = published;
                     ld.dateModified = published;
+                }
+
+                if (news.tags) {
+                    ld.keywords = news.tags;
                 }
 
                 const ldTag = document.createElement("script");
@@ -284,6 +289,24 @@
                     });
                     return wrap;
                 }
+
+                if (type === "reddit") {
+                    const block = document.createElement("blockquote");
+                    block.className = "reddit-embed-bq";
+                    block.setAttribute("data-embed-height", "500");
+
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.target = "_blank";
+                    a.rel = "noopener noreferrer";
+                    a.textContent = "Reddit gönderisini görüntüle";
+
+                    block.appendChild(a);
+                    wrap.appendChild(block);
+
+                    loadScriptOnce("reddit-embed-script", "https://embed.reddit.com/widgets.js", null);
+                    return wrap;
+                }
             } catch (error) {
                 console.error("Embed hatası:", error);
             }
@@ -364,6 +387,33 @@
                 a.rel = "noopener noreferrer";
                 a.textContent = "Kaynak";
                 source.appendChild(a);
+            }
+        }
+
+        // ========================================
+        // ETİKETLER
+        // ========================================
+        const tagsEl = $("articleTags");
+        if (tagsEl) {
+            tagsEl.innerHTML = "";
+
+            const tagList = String(news.tags || "")
+                .split(",")
+                .map(t => t.trim())
+                .filter(Boolean);
+
+            if (tagList.length) {
+                const label = document.createElement("span");
+                label.className = "news-tags-label";
+                label.textContent = "Etiketler:";
+                tagsEl.appendChild(label);
+
+                tagList.forEach(name => {
+                    const chip = document.createElement("span");
+                    chip.className = "news-tag";
+                    chip.textContent = name;
+                    tagsEl.appendChild(chip);
+                });
             }
         }
 
