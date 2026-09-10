@@ -48,6 +48,41 @@
         const $ = x => document.getElementById(x);
 
         // ========================================
+        // SEO YARDIMCILARI
+        // Sayfanin <head> bolumune baslik, aciklama, canonical ve
+        // sosyal medya paylasim etiketlerini yazmak icin kullanilir.
+        // ========================================
+        const SITE_URL = "https://khengbok.pages.dev";
+
+        function setMeta(attr, key, content) {
+            if (!content) return;
+            let el = document.head.querySelector("meta[" + attr + '="' + key + '"]');
+            if (!el) {
+                el = document.createElement("meta");
+                el.setAttribute(attr, key);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("content", content);
+        }
+
+        function setCanonical(url) {
+            let el = document.head.querySelector('link[rel="canonical"]');
+            if (!el) {
+                el = document.createElement("link");
+                el.setAttribute("rel", "canonical");
+                document.head.appendChild(el);
+            }
+            el.setAttribute("href", url);
+        }
+
+        function plainText(html, len) {
+            const d = document.createElement("div");
+            d.innerHTML = html || "";
+            const t = (d.textContent || "").replace(/\s+/g, " ").trim();
+            return t.length > len ? t.slice(0, len - 1).trim() + "…" : t;
+        }
+
+        // ========================================
         // HABER BULUNAMADI VEYA YÜKLENEMEDİ
         // ========================================
         if (!news) {
@@ -56,7 +91,78 @@
 
             if (titleEl) titleEl.textContent = "Haber bulunamadı.";
             if (contentEl) contentEl.innerHTML = "<p>Bu haber mevcut değil veya yüklenirken bir sorun oluştu.</p>";
+
+            // Bos haber sayfasi Google'a eklenmesin.
+            document.title = "Haber bulunamadı | Khengbok";
+            setMeta("name", "robots", "noindex, follow");
             return;
+        }
+
+        // ========================================
+        // SEO: BASLIK / ACIKLAMA / CANONICAL / PAYLASIM ETIKETLERI
+        // ========================================
+        {
+            const pageUrl = SITE_URL + "/haber?id=" + encodeURIComponent(news.id);
+            const desc = plainText(news.text, 155) ||
+                ((news.title || "Khengbok") + " - Khengbok K-pop haberleri.");
+
+            // Kapak gorseli veritabaninda base64 (data:) olarak duruyor ve
+            // paylasim etiketlerinde kullanilamaz. Worker'daki /cover adresi
+            // ayni gorseli gercek bir resim dosyasi olarak sunar.
+            // Kapak yoksa sitenin genel kapak gorseline duseriz.
+            const ogImage = news.image
+                ? KHENGBOK_API + "/api/articles/" + encodeURIComponent(news.id) + "/cover"
+                : SITE_URL + "/og-kapak.png";
+
+            document.title = (news.title || "Haber") + " | Khengbok";
+
+            setMeta("name", "description", desc);
+            setCanonical(pageUrl);
+
+            setMeta("property", "og:type", "article");
+            setMeta("property", "og:site_name", "Khengbok");
+            setMeta("property", "og:locale", "tr_TR");
+            setMeta("property", "og:title", news.title || "Khengbok");
+            setMeta("property", "og:description", desc);
+            setMeta("property", "og:url", pageUrl);
+            setMeta("property", "og:image", ogImage);
+
+            setMeta("name", "twitter:card", "summary_large_image");
+            setMeta("name", "twitter:title", news.title || "Khengbok");
+            setMeta("name", "twitter:description", desc);
+            setMeta("name", "twitter:image", ogImage);
+
+            // Google'in haberi "makale" olarak tanimasi icin yapisal veri.
+            try {
+                const published = (news.date && news.time)
+                    ? news.date + "T" + news.time + ":00+03:00"
+                    : (news.date ? news.date : "");
+
+                const ld = {
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "headline": (news.title || "").slice(0, 110),
+                    "description": desc,
+                    "inLanguage": "tr-TR",
+                    "articleSection": news.category || "Genel",
+                    "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
+                    "image": [ogImage],
+                    "author": { "@type": "Organization", "name": "Khengbok", "url": SITE_URL },
+                    "publisher": { "@type": "Organization", "name": "Khengbok", "url": SITE_URL }
+                };
+
+                if (published) {
+                    ld.datePublished = published;
+                    ld.dateModified = published;
+                }
+
+                const ldTag = document.createElement("script");
+                ldTag.type = "application/ld+json";
+                ldTag.textContent = JSON.stringify(ld);
+                document.head.appendChild(ldTag);
+            } catch (err) {
+                console.error("Yapısal veri hatası:", err);
+            }
         }
 
         // ========================================
@@ -323,7 +429,11 @@
                             const replyBox = document.createElement("div");
                             replyBox.className = "admin-reply";
                             replyBox.style.cssText = "margin-left: 15px; border-left: 2px solid #8a2be2; padding-left: 10px;";
-                            replyBox.innerHTML = `<strong>Yönetici Yanıtı:</strong> <p>${c.reply}</p>`;
+                            const replyTitle = document.createElement("strong");
+                            replyTitle.textContent = "Yönetici Yanıtı:";
+                            const replyText = document.createElement("p");
+                            replyText.textContent = c.reply;
+                            replyBox.append(replyTitle, replyText);
                             el.appendChild(replyBox);
                         }
 

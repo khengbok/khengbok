@@ -1,7 +1,52 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Kategori | Khengbok</title><link rel="stylesheet" href="style.css"></head><body><header><h1>KHENGBOK</h1><nav>
-<a href="index.html">Ana Sayfa</a>
-<a href="gruplar.html">Kategoriler</a>
-<a href="haberler.html">Haberler</a>
-<a href="populer.html">Popüler</a>
-<a href="hakkinda.html">Hakkında</a>
-</nav></header><main><section class="group-header"><h2 id="groupTitle">Kategori</h2><p>Bu kategoriye ait yayınlanmış haberler.</p></section><section><div id="groupNewsList" class="news-grid"></div></section></main><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Kategori | Khengbok</title>
+<meta name="description" content="Bu kategoriye ait yayınlanmış tüm K-pop haberleri Khengbok'ta.">
+<!-- canonical ve baslik, script.js tarafindan kategori adina gore otomatik yazilir -->
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Khengbok">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Kategori | Khengbok">
+<meta property="og:description" content="Bu kategoriye ait yayınlanmış tüm K-pop haberleri.">
+<meta property="og:image" content="https://khengbok.pages.dev/og-kapak.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+<h1>KHENGBOK</h1>
+<nav>
+<a href="/">Ana Sayfa</a>
+<a href="/gruplar">Kategoriler</a>
+<a href="/haberler">Haberler</a>
+<a href="/populer">Popüler</a>
+<a href="/hakkinda">Hakkında</a>
+</nav>
+</header>
+
+<main>
+
+<section class="group-header">
+<h2 id="groupTitle">Kategori</h2>
+<p>Bu kategoriye ait yayınlanmış haberler.</p>
+</section>
+
+<section>
+<div id="groupNewsList" class="news-grid"></div>
+</section>
+
+</main>
+
+<script src="/script.js"></script>
+</body>
+</html>

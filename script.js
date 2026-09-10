@@ -40,7 +40,17 @@ async function loadCloudNews(){
           id: a.id,
           title: a.title || "",
           text: a.content || "",
-          image: a.cover_image || "",
+
+          // Kapak gorseli:
+          // - Worker guncellendiyse liste yaniti "has_cover" alani gonderir ve
+          //   gorseli ayri bir adresten (../cover) gercek resim olarak cekeriz.
+          // - Worker henuz guncellenmediyse eski davranisa (base64 cover_image)
+          //   otomatik olarak geri duseriz. Boylece site her iki durumda calisir.
+          image: (a.has_cover !== undefined)
+            ? (Number(a.has_cover)
+                ? KHENGBOK_API + "/api/articles/" + encodeURIComponent(a.id) + "/cover"
+                : "")
+            : (a.cover_image || ""),
           category: a.category || "Genel",
           source: a.source || "",
           date: a.news_date || "",
@@ -97,10 +107,10 @@ function sortNews(list){
   (Number(b.createdAt)||Number(b.id)||0)-(Number(a.createdAt)||Number(a.id)||0)
  );
 }
-function href(n){return "haber.html?id="+encodeURIComponent(n.id);}
+function href(n){return "/haber?id="+encodeURIComponent(n.id);}
 function card(n){
  const el=document.createElement("article");el.className="news-card-item";
- const image=n.image?`<img src="${n.image}" class="news-card-image" alt="${escapeHTML(n.title||"Haber")}">`:`<div class="news-card-no-image">HABER GÖRSELİ</div>`;
+ const image=n.image?`<img src="${n.image}" class="news-card-image" loading="lazy" alt="${escapeHTML(n.title||"Haber")}">`:`<div class="news-card-no-image">HABER GÖRSELİ</div>`;
  el.innerHTML=`<a class="news-card-link" href="${href(n)}">
   <div class="news-card-image-wrapper">${image}</div>
   <div class="news-card-content">
@@ -122,7 +132,28 @@ function render(id,opts={}){
  list.forEach(n=>box.appendChild(card(n)));
 }
 
+// Sayfada haber listesi kutusu yoksa (orn. haber detay sayfasi) buyuk haber
+// listesini hic indirmiyoruz. Bu, haber sayfalarinin cok daha hizli acilmasini
+// ve Google'in icerigi sorunsuz gormesini saglar.
+function pageNeedsNewsList(){
+  return !!(document.getElementById("homeLatestNewsList")
+    || document.getElementById("homePopularNewsList")
+    || document.getElementById("latestNewsList")
+    || document.getElementById("popularNewsList")
+    || document.getElementById("categoryGrid")
+    || document.getElementById("groupNewsList"));
+}
+
+// <link rel="canonical"> etiketini olusturur veya gunceller.
+function setCanonical(url){
+  let el=document.head.querySelector('link[rel="canonical"]');
+  if(!el){ el=document.createElement("link"); el.setAttribute("rel","canonical"); document.head.appendChild(el); }
+  el.setAttribute("href",url);
+}
+
 async function bootstrapNews(){
+  if(!pageNeedsNewsList()) return;
+
   await loadCloudNews();
   render("homeLatestNewsList",{limit:6});
   render("homePopularNewsList",{popular:true,limit:3});
@@ -140,7 +171,7 @@ async function bootstrapNews(){
       cats.forEach(name=>{
         const count=published.filter(n=>(n.category||"").toLocaleLowerCase("tr-TR")===name.toLocaleLowerCase("tr-TR")).length;
         const a=document.createElement("a");
-        a.href="grup.html?name="+encodeURIComponent(name);
+        a.href="/grup?name="+encodeURIComponent(name);
         a.className="group-card";
         a.innerHTML='<div class="group-image">'+escapeHTML(name)+'</div><h3>'+escapeHTML(name)+'</h3><p>'+count+' haber</p>';
         categoryGrid.appendChild(a);
@@ -153,6 +184,18 @@ async function bootstrapNews(){
     const name=new URLSearchParams(location.search).get("name")||"";
     const title=document.getElementById("groupTitle");
     if(title)title.textContent=name||"Kategori";
+
+    // Kategori sayfasinin basligini, aciklamasini ve canonical adresini
+    // kategori adina gore yaz (SEO icin her kategori benzersiz olmali).
+    if(name){
+      document.title=name+" Haberleri | Khengbok";
+      setCanonical("https://khengbok.pages.dev/grup?name="+encodeURIComponent(name));
+      const desc=document.head.querySelector('meta[name="description"]');
+      if(desc)desc.setAttribute("content",name+" ile ilgili yayinlanmis tum K-pop haberleri Khengbok'ta.");
+      const ogt=document.head.querySelector('meta[property="og:title"]');
+      if(ogt)ogt.setAttribute("content",name+" Haberleri | Khengbok");
+    }
+
     render("groupNewsList",{category:name});
   }
 }
